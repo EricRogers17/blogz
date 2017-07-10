@@ -25,5 +25,11 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/', methods=['POST', 'GET'])
+def add_post():
+    if request.method == 'POST':
+        title = request.form['title']
+        body = request.form['body']
+
 if __name__ == '__main__':
     app.run()
