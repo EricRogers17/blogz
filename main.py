@@ -20,16 +20,28 @@ class Blog(db.Model):
         self.body = body
 
 
-@app.route('/')
+@app.route('/blog')
 def index():
     return render_template('index.html')
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/blog', methods=['POST', 'GET'])
 def add_post():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
 
+
+@app.route('/newpost', methods=['POST', 'GET'])
+def newpost():
+    if request.method == 'POST':
+        title = request.form('title')
+        body = request.form('body')
+
+    # if title == '':
+    #    flash('Please fill out the title field')
+    # if not body:
+    #    flash('Please fill out the body field')
+    return render_template('newpost.html')
 if __name__ == '__main__':
     app.run()

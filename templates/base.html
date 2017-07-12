@@ -2,8 +2,21 @@
 <html>
 	<head>
 		<title>{{title}}</title>
+		<style>
+			h1 {
+				padding-left: 2em;
+			}
+			label {
+				display: block;
+			}
+			.formclass {
+				padding: 10px;
+			}
+		</style>
 	</head>
 <body>
+	<a href="/blog">Main Blog Page</a>
+	<a href="/newpost">Add a Blog Entry</a>
 	{% block content %}
 	
 	{% endblock %}
