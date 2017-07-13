@@ -54,5 +54,13 @@ def add_post():
         return render_template('newpost.html', title_error=title_error, body_error=body_error)
 
 
+#@app.route('/blog/<int:id>', methods=['GET'])
+# def show_blog():
+    #blog_id = request.args.get('id').first()
+    #oneBlog = Blog.query.filter_by(id=blog_id)
+
+    # return render_template('oneblog.html', oneBlog=oneBlog)
+
+
 if __name__ == '__main__':
     app.run()
