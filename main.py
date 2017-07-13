@@ -22,26 +22,37 @@ class Blog(db.Model):
 
 @app.route('/blog')
 def index():
-    return render_template('index.html')
+    blogs = Blog.query.all()
+    return render_template('index.html', blogs=blogs)
 
 
-@app.route('/blog', methods=['POST', 'GET'])
+@app.route('/newpost')
+def display_newpost_view():
+    return render_template('newpost.html')
+
+
+@app.route('/newpost', methods=['POST', 'GET'])
 def add_post():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
 
+    title_error = ''
+    body_error = ''
 
-@app.route('/newpost', methods=['POST', 'GET'])
-def newpost():
-    if request.method == 'POST':
-        title = request.form('title')
-        body = request.form('body')
+    if title == '':
+        title_error = 'Please fill out the Title field'
+    if body == '':
+        body_error = 'Please fill out the Blog field'
 
-    # if title == '':
-    #    flash('Please fill out the title field')
-    # if not body:
-    #    flash('Please fill out the body field')
-    return render_template('newpost.html')
+    if not title_error and not body_error:
+        new_blog = Blog(title, body)
+        db.session.add(new_blog)
+        db.session.commit()
+        return redirect('/blog')
+    else:
+        return render_template('newpost.html', title_error=title_error, body_error=body_error)
+
+
 if __name__ == '__main__':
     app.run()
