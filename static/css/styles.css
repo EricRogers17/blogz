@@ -1,0 +1,19 @@
+body {
+	background-color: darkgrey;
+}
+nav a {
+	padding: 20px;
+	text-decoration: none;
+}
+h1 {
+	padding-left: 2em;
+}
+label {
+	display: block;
+	padding-left: 2em;
+}
+.error {
+	color: red;
+}
+
+		
