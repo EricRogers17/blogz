@@ -15,10 +15,13 @@
 		</style>
 	</head>
 <body>
-	<a href="/blog">Main Blog Page</a>
-	<a href="/newpost">Add a Blog Entry</a>
-	{% block content %}
+	<nav>
+		<a href="/blog">Main Blog Page</a>
+		<a href="/newpost">Add a Blog Entry</a>
+	</nav>
 	
+	{% block content %}
+	<h1>{{ page_title }}</h1>
 	{% endblock %}
 </body>
 </html>

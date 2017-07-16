@@ -1,5 +1,6 @@
 from flask import Flask, redirect, request, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -14,15 +15,28 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
+    publish_date = db.Column(db.DateTime)
 
     def __init__(self, title, body):
         self.title = title
         self.body = body
+        self.publish_date = datetime.utcnow()
 
 
 @app.route('/blog')
-def index():
-    blogs = Blog.query.all()
+def display_blogs():
+    blog_id = request.args.get('id')
+
+    if (blog_id):
+        blog = Blog.query.get(blog_id)
+        return render_template('one_blog.html', page_title="Blog Entry", blog=blog)
+
+    sort_type = request.args.get('sort')
+    if sort_type == "newest":
+        blogs = Blog.query.order_by(Blog.created.desc()).all()
+    else:
+        blogs = Blog.query.all()
+
     return render_template('index.html', blogs=blogs)
 
 
@@ -49,17 +63,10 @@ def add_post():
         new_blog = Blog(title, body)
         db.session.add(new_blog)
         db.session.commit()
-        return redirect('/blog')
+        url = "/blog?id=" + str(new_blog.id)
+        return redirect(url)
     else:
         return render_template('newpost.html', title_error=title_error, body_error=body_error)
-
-
-#@app.route('/blog/<int:id>', methods=['GET'])
-# def show_blog():
-    #blog_id = request.args.get('id').first()
-    #oneBlog = Blog.query.filter_by(id=blog_id)
-
-    # return render_template('oneblog.html', oneBlog=oneBlog)
 
 
 if __name__ == '__main__':

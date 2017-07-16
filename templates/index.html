@@ -4,8 +4,9 @@
 	<h1> Build a Blog </h1>
 	
 		{% for blog in blogs %}
-			<a href="./blog?id={{blog.id}}">{{blog.title}}</a>
-			<p>{{blog.body}}</p>
+			<a href="/blog?id={{ blog.id }}">{{ blog.title }}</a>
+			<p>{{ blog.body }}</p>
+			<p>{{ blog.publish_date }}</p>
 			<hr>
 		{% endfor %}
 
