@@ -16,11 +16,11 @@ class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
-    body = db.Column(db.String(120))
+    body = db.Column(db.String(500))
     publish_date = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body):
+    def __init__(self, title, body, owner):
         self.title = title
         self.body = body
         self.publish_date = datetime.utcnow()
@@ -37,6 +37,14 @@ class User(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'display_blogs',
+                      'add_post', 'signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 
 @app.route('/signup')
@@ -100,7 +108,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(username=username).first()
         login_error = ''
         if user and user.password == password:
             session['username'] = username
@@ -110,6 +118,11 @@ def login():
             return render_template('/login', login_error=login_error)
 
     return render_template('login.html')
+
+
+@app.route('/')
+def index():
+    return render_template('authors.html', title="Home")
 
 
 @app.route('/blog')
@@ -137,7 +150,6 @@ def display_newpost_view():
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_post():
     # Will probably need this when creating new posts:
-    #owner = User.query.filter_by(email=session['email']).first()
 
     if request.method == 'POST':
         title = request.form['title']
@@ -152,7 +164,8 @@ def add_post():
         body_error = 'Please fill out the Blog field'
 
     if not title_error and not body_error:
-        new_blog = Blog(title, body)
+        owner = User.query.filter_by(username=session['username']).first()
+        new_blog = Blog(title, body, owner)
         db.session.add(new_blog)
         db.session.commit()
         url = "/blog?id=" + str(new_blog.id)
@@ -160,6 +173,13 @@ def add_post():
     else:
         return render_template('newpost.html', title_error=title_error, body_error=body_error)
 
+# TODO - resolve routing issue
+
+
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect('/blog')
 
 if __name__ == '__main__':
     app.run()
