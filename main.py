@@ -39,6 +39,53 @@ class User(db.Model):
         self.password = password
 
 
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
+
+    # Error variables
+    username_error = ''
+    password_error = ''
+    verify_error = ''
+
+    # ---- Validate user signup -----
+    # username and password musn't have spaces and be between 3-20 characters
+    if len(username) < 3 or len(username) > 20:
+        username_error = 'Username must be between 3-20 charaters'
+
+    if ' ' in username:
+        username_error = 'Username cannot contain spaces'
+
+    if len(password) < 3 or len(password) > 20:
+        password_error = 'Password must be between 3-20 charaters'
+
+    if ' ' in password:
+        password_error = 'Password cannot contain spaces'
+
+    # user's password and verify don't match
+    if password != verify:
+        verify_error = "Password and Verify Password don't match"
+
+    # Query db to check for an existing user
+    existing_user = User.query.filter_by(username=username).first()
+    if not existing_user:
+        new_user = User(username, password)
+        db.session.add(new_user)
+        db.session.commit()
+        session['username'] = username
+        return redirect('/index.html')
+    else:
+        return render_template('signup.html',
+                               username=username,
+                               username_error=username_error,
+                               password_error=password_error,
+                               verify_error=verify_error,
+                               )
+
+
 @app.route('/blog')
 def display_blogs():
     blog_id = request.args.get('id')

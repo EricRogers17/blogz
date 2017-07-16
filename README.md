@@ -11,3 +11,23 @@ WHAT:
 
 5.Create a User class to make all this new functionality possible.
 
+FUNCTIONALITY OF LOGIN AND SIGNUP PAGES
+--- For /login page ---
+- user logins successfully and is redirected to /newpost page with their username being stored in a session.
+
+- if user enters an invalide password they are redirected to the /login page with a relevant error message.
+
+- user tries to login with username that is not in stored in the db and is redirected to the /login page with a message "This username does not exist".
+
+- user does not have an account and clicks "Create Account" and is directed to the /signup page.
+
+--- For /signup page ---
+- User enters new, valid username, a valid password, and verifies password correctly and is redirected to the '/newpost' page with their username being stored in a session.
+
+- User leaves any of the username, password, or verify fields blank and gets an error message that one or more fields are invalid.
+
+- User enters a username that already exists and gets an error message that username already exists.
+
+- User enters different strings into the password and verify fields and gets an error message that the passwords do not match.
+
+- User enters a password or username less than 3 characters long and gets either an invalid username or an invalid password message.
