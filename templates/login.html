@@ -3,6 +3,16 @@
 {% block content %}
 
 	<h1>{{ title }}</h1>
-	
+	<form action="/login" method="POST">
+		<label for="username">Username:</label>
+		<input type="text" name="username">
+
+		<label for="password">Password:</label>
+		<input type="password" name="password">
+		<span>{{ login_error }}</span>
+
+		<input type="submit" value="Submit">
+	</form>
+	<p>Don't have an account? Create one <a href="/signup">here</a></p>
 
 {% endblock %}

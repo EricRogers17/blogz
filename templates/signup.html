@@ -15,6 +15,10 @@
 		<label for="verify">Verify Password:</label>	
 		<input type="password" name="verfiy">
 		<span class="error">{{ verify_error }}</span>
+
+		<input type="submit" value="Sign Up">
+		<span class="error">{{ existing_user_error }}</span>
+		<!-- Add anchor tag to redirect to login page if there is an existing_user_error -->
 	</form>
 
 {% endblock %}
