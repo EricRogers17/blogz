@@ -5,22 +5,38 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:rogers@localhost:8889/build-a-blog'
+    'SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:blogzapp@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 app.secret_key = 'something'
 
 
 class Blog(db.Model):
+    ''' Organizes a blog post by sections defined below '''
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(120))
     publish_date = db.Column(db.DateTime)
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body):
         self.title = title
         self.body = body
         self.publish_date = datetime.utcnow()
+        self.owner = owner
+
+
+class User(db.Model):
+    '''Will create and store new users '''
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50))
+    password = db.Column(db.String(50))
+    blogs = db.relationship('Blog', backref='owner')
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 
 @app.route('/blog')
@@ -47,6 +63,9 @@ def display_newpost_view():
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_post():
+    # Will probably need this when creating new posts:
+    #owner = User.query.filter_by(email=session['email']).first()
+
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
