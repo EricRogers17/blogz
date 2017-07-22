@@ -115,7 +115,9 @@ def login():
 
 @app.route('/')
 def index():
-    return render_template('authors.html', title="Home")
+    # LEFT OFF HERE. FINISH QUERYING DATABASE TO DISPLAY AUTHOR'S POSTS
+    blogs = Blog.query.all()
+    return render_template('authors.html', title="Blog Posts by Author", blogs=blogs)
 
 
 @app.route('/blog')
