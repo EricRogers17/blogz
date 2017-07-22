@@ -42,74 +42,62 @@ class User(db.Model):
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'display_blogs',
-                      'add_post', 'display_signup_page', 'signup']
+                      'index', 'signup']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 
-@app.route('/signup')
-def display_signup_page():
-    return render_template('signup.html', title="Sign Up Page")
-
-
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        verify = request.form['verify']
-
     # Error variables
     username_error = ''
     password_error = ''
     verify_error = ''
     existing_user_error = ''
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        verify = request.form['verify']
     # ---- Validate user signup -----
-    # username and password musn't have spaces and be between 3-20 characters
-    if len(username) < 3 or len(username) > 20:
-        username_error = 'Username must be between 3-20 charaters'
+        if len(username) < 3 or len(username) > 20:
+            username_error = 'Username must be between 3-20 charaters'
 
-    if ' ' in username:
-        username_error = 'Username cannot contain spaces'
+        if ' ' in username:
+            username_error = 'Username cannot contain spaces'
 
-    if len(password) < 3 or len(password) > 20:
-        password_error = 'Password must be between 3-20 charaters'
+        if len(password) < 3 or len(password) > 20:
+            password_error = 'Password must be between 3-20 charaters'
 
-    if ' ' in password:
-        password_error = 'Password cannot contain spaces'
+        if ' ' in password:
+            password_error = 'Password cannot contain spaces'
 
-    # user's password and verify don't match
-    if password != verify:
-        verify_error = "Password and Verify Password don't match"
+        # user's password and verify don't match
+        if password != verify:
+            verify_error = "Password and Verify Password don't match"
 
     # if not username_error and not password_error and not verify_error:
         # Query db to check for an existing user
-    existing_user = User.query.filter_by(username=username).first()
-    if not existing_user:
-        new_user = User(username, password)
-        db.session.add(new_user)
-        db.session.commit()
-        session['username'] = username
-        return redirect('/index')
-    elif existing_user:
-        existing_user_error = 'Username already exists'
-        return render_template('signup.html', existing_user_error=existing_user_error)
-    else:
-        return render_template('signup.html',
-                               username=username,
-                               username_error=username_error,
-                               password_error=password_error,
-                               verify_error=verify_error,
-                               )
+        existing_user = User.query.filter_by(username=username).first()
+        if not existing_user:
+            new_user = User(username, password)
+            db.session.add(new_user)
+            db.session.commit()
+            session['username'] = username
+            return redirect('/newpost')
+        else:
+            existing_user_error = 'Username already exists'
+            return render_template('signup.html', existing_user_error=existing_user_error)
 
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
+    return render_template('signup.html',
+                           username_error=username_error,
+                           password_error=password_error,
+                           verify_error=verify_error,
+                           )
 
 
 @app.route('/login', methods=['POST', 'GET'])
-def login_user():
+def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -120,9 +108,9 @@ def login_user():
             return redirect('/newpost')
         else:
             login_error = 'User password incorrect, or user does not exist'
-            return render_template('/login', login_error=login_error)
+            return render_template('login.html', login_error=login_error)
 
-    return render_template('newpost.html')
+    return render_template('login.html')
 
 
 @app.route('/')
@@ -147,36 +135,28 @@ def display_blogs():
     return render_template('index.html', blogs=blogs)
 
 
-@app.route('/newpost')
-def display_newpost_view():
-    return render_template('newpost.html')
-
-
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_post():
-    # Will probably need this when creating new posts:
 
+    title_error = ''
+    body_error = ''
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
 
-    title_error = ''
-    body_error = ''
+        if title == '':
+            title_error = 'Please fill out the Title field'
+        if body == '':
+            body_error = 'Please fill out the Blog field'
 
-    if title == '':
-        title_error = 'Please fill out the Title field'
-    if body == '':
-        body_error = 'Please fill out the Blog field'
-
-    if not title_error and not body_error:
-        owner = User.query.filter_by(username=session['username']).first()
-        new_blog = Blog(title, body, owner)
-        db.session.add(new_blog)
-        db.session.commit()
-        url = "/blog?id=" + str(new_blog.id)
-        return redirect(url)
-    else:
-        return render_template('newpost.html', title_error=title_error, body_error=body_error)
+        if not title_error and not body_error:
+            owner = User.query.filter_by(username=session['username']).first()
+            new_blog = Blog(title, body, owner)
+            db.session.add(new_blog)
+            db.session.commit()
+            url = "/blog?id=" + str(new_blog.id)
+            return redirect(url)
+    return render_template('newpost.html', title_error=title_error, body_error=body_error)
 
 # TODO - resolve routing issue
 
