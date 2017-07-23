@@ -115,13 +115,25 @@ def login():
 
 @app.route('/')
 def index():
-    # LEFT OFF HERE. FINISH QUERYING DATABASE TO DISPLAY AUTHOR'S POSTS
-    blogs = Blog.query.all()
+    # TODO - User is on the / page ("Home" page) and clicks on an author's username in the list and lands on the individual blog user's page.
+    # TODO - User is on the individual entry page (e.g., /blog?id=1) and
+    # clicks on the author's username in the tagline and lands on the
+    # individual blog user's page.
+    blogs = Blog.query.order_by(Blog.id.desc()).all()
     return render_template('authors.html', title="Blog Posts by Author", blogs=blogs)
 
 
 @app.route('/blog')
 def display_blogs():
+    # if person clicks on author, route to author_page.html
+    owner_id = request.args.get('user')
+
+    if (owner_id):
+        #owner_id = User.query.filter_by(username=user_name).first()
+        blogs = Blog.query.filter_by(owner_id=owner_id)
+        return render_template('author_page.html', title="Author's Posts", blogs=blogs)
+
+    # if person clicks on individual blog post
     blog_id = request.args.get('id')
 
     if (blog_id):
@@ -159,8 +171,6 @@ def add_post():
             url = "/blog?id=" + str(new_blog.id)
             return redirect(url)
     return render_template('newpost.html', title_error=title_error, body_error=body_error)
-
-# TODO - resolve routing issue
 
 
 @app.route('/logout')
