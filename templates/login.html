@@ -3,16 +3,18 @@
 {% block content %}
 
 	<h1>{{ title }}</h1>
-	<form action="/login" method='POST'>
-		<label for="username">Username:</label>
-		<input type="text" name="username">
+	<div class="content">
+		<form action="/login" method='POST'>
+			<label for="username">Username:</label>
+			<input type="text" name="username">
 
-		<label for="password">Password:</label>
-		<input type="password" name="password">
-		<span>{{ login_error }}</span>
+			<label for="password">Password:</label>
+			<input type="password" name="password">
+			<span class="error">{{ login_error }}</span>
 
-		<input type="submit" value="Submit">
-	</form>
+			<input type="submit" value="Submit">
+		</form>
+	</div>
 	<p>Don't have an account? Create one <a href="/signup">here</a></p>
 
 {% endblock %}

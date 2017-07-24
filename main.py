@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template, session, flash
+from flask import Flask, redirect, request, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 

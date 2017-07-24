@@ -1,5 +1,5 @@
 body {
-	background-color: darkgrey;
+  background-color: #aac4ef;
 }
 nav a {
 	padding: 20px;
@@ -15,5 +15,13 @@ label {
 .error {
 	color: red;
 }
+.login_logout {
+	display: inline-block;
+	padding-left: 20em;
+}
+.content {
+	padding: 4em;
+}
+
 
 		
